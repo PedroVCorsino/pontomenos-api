@@ -1,10 +1,11 @@
 package controllers
 
 import (
-    "github.com/gin-gonic/gin"
-    "net/http"
-    "pontomenos-api/models"
-    "pontomenos-api/services"
+	"net/http"
+	"pontomenos-api/models"
+	"pontomenos-api/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 type UsuarioController struct {
@@ -40,6 +41,7 @@ func (uc *UsuarioController) CreateUsuario(c *gin.Context) {
 }
 
 // FindUsuarioById @Summary Busca um usuário pelo ID
+// @Security Bearer
 // @Description Retorna um usuário dado seu ID
 // @Tags usuarios
 // @Accept json
@@ -94,6 +96,7 @@ func (uc *UsuarioController) UpdateUsuario(c *gin.Context) {
 
 
 // DeleteUsuario @Summary Exclui um usuário
+// @Security Bearer
 // @Description Exclui um usuário dado seu ID
 // @Tags usuarios
 // @Accept json

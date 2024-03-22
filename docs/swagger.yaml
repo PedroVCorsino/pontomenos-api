@@ -61,6 +61,25 @@ paths:
       summary: Autentica um usuário
       tags:
       - auth
+  /ponto:
+    post:
+      consumes:
+      - application/json
+      description: Registra o ponto do usuário com o login obtido do JWT
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: Ponto registrado com sucesso
+        "401":
+          description: Não autorizado
+        "500":
+          description: Erro interno do servidor
+      security:
+      - Bearer: []
+      summary: Registra ponto
+      tags:
+      - ponto
   /usuarios:
     post:
       consumes:
@@ -102,6 +121,8 @@ paths:
             additionalProperties:
               type: string
             type: object
+      security:
+      - Bearer: []
       tags:
       - usuarios
     get:

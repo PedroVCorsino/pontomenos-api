@@ -70,6 +70,37 @@ const docTemplate = `{
                 }
             }
         },
+        "/ponto": {
+            "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Registra o ponto do usuário com o login obtido do JWT",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ponto"
+                ],
+                "summary": "Registra ponto",
+                "responses": {
+                    "204": {
+                        "description": "Ponto registrado com sucesso"
+                    },
+                    "401": {
+                        "description": "Não autorizado"
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor"
+                    }
+                }
+            }
+        },
         "/usuarios": {
             "post": {
                 "description": "Adiciona um novo usuário com as informações fornecidas",
@@ -139,6 +170,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Exclui um usuário dado seu ID",
                 "consumes": [
                     "application/json"

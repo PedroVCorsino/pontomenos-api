@@ -30,29 +30,41 @@ const docTemplate = `{
                 "summary": "Autentica um usuário",
                 "parameters": [
                     {
-                        "description": "Login do Usuário",
-                        "name": "login",
+                        "description": "Dados de Login",
+                        "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Senha do Usuário",
-                        "name": "senha",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/controllers.LoginData"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "token JWT",
+                        "description": "Token JWT",
                         "schema": {
-                            "type": "string"
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Mensagem de erro para requisição inválida",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Mensagem de erro para login ou senha inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
                         }
                     }
                 }
@@ -93,6 +105,11 @@ const docTemplate = `{
         },
         "/usuarios/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Retorna um usuário dado seu ID",
                 "consumes": [
                     "application/json"
@@ -197,6 +214,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controllers.LoginData": {
+            "type": "object",
+            "properties": {
+                "login": {
+                    "type": "string"
+                },
+                "senha": {
+                    "type": "string"
+                }
+            }
+        },
         "models.Usuario": {
             "type": "object",
             "properties": {
@@ -214,6 +242,13 @@ const docTemplate = `{
                 }
             }
         }
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
     }
 }`
 
@@ -222,7 +257,7 @@ var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8080",
 	BasePath:         "/",
-	Schemes:          []string{},
+	Schemes:          []string{"http", "https"},
 	Title:            "Pontomenos API",
 	Description:      "API desenvolvida para o hackthon da FIAP PósTech.",
 	InfoInstanceName: "swagger",

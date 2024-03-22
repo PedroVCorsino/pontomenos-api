@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  controllers.LoginData:
+    properties:
+      login:
+        type: string
+      senha:
+        type: string
+    type: object
   models.Usuario:
     properties:
       email:
@@ -24,25 +31,33 @@ paths:
       - application/json
       description: Autentica um usuário com login e senha
       parameters:
-      - description: Login do Usuário
+      - description: Dados de Login
         in: body
-        name: login
+        name: body
         required: true
         schema:
-          type: string
-      - description: Senha do Usuário
-        in: body
-        name: senha
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/controllers.LoginData'
       produces:
       - application/json
       responses:
         "200":
-          description: token JWT
+          description: Token JWT
           schema:
-            type: string
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Mensagem de erro para requisição inválida
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Mensagem de erro para login ou senha inválidos
+          schema:
+            additionalProperties:
+              type: string
+            type: object
       summary: Autentica um usuário
       tags:
       - auth
@@ -106,6 +121,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.Usuario'
+      security:
+      - Bearer: []
       tags:
       - usuarios
     patch:
@@ -136,4 +153,12 @@ paths:
       summary: Atualiza informações de um usuário
       tags:
       - usuarios
+schemes:
+- http
+- https
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

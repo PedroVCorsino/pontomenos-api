@@ -1,10 +1,11 @@
 package services
 
 import (
-    "errors"
-    "github.com/dgrijalva/jwt-go"
-    "pontomenos-api/utils"
-    "time"
+	"errors"
+	"pontomenos-api/utils"
+	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 var jwtKey = []byte("sua_chave_secreta_super_secreta")

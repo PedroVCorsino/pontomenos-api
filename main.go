@@ -7,7 +7,8 @@ import (
     "pontomenos-api/infrastructure/repositories"
     "pontomenos-api/routes"
     "pontomenos-api/services"
-	"pontomenos-api/utils" /
+	"pontomenos-api/utils" 
+)
 
 // @title Pontomenos API
 // @description API desenvolvida para o hackthon da FIAP PósTech.

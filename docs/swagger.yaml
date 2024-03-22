@@ -1,0 +1,139 @@
+basePath: /
+definitions:
+  models.Usuario:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      nome:
+        type: string
+      senha:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API desenvolvida para o hackthon da FIAP PósTech.
+  title: Pontomenos API
+  version: "1.0"
+paths:
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: Autentica um usuário com login e senha
+      parameters:
+      - description: Login do Usuário
+        in: body
+        name: login
+        required: true
+        schema:
+          type: string
+      - description: Senha do Usuário
+        in: body
+        name: senha
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: token JWT
+          schema:
+            type: string
+      summary: Autentica um usuário
+      tags:
+      - auth
+  /usuarios:
+    post:
+      consumes:
+      - application/json
+      description: Adiciona um novo usuário com as informações fornecidas
+      parameters:
+      - description: Informações do Usuário
+        in: body
+        name: usuario
+        required: true
+        schema:
+          $ref: '#/definitions/models.Usuario'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Usuario'
+      tags:
+      - usuarios
+  /usuarios/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Exclui um usuário dado seu ID
+      parameters:
+      - description: ID do Usuário
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Usuário excluído com sucesso!'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      tags:
+      - usuarios
+    get:
+      consumes:
+      - application/json
+      description: Retorna um usuário dado seu ID
+      parameters:
+      - description: ID do Usuário
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Usuario'
+      tags:
+      - usuarios
+    patch:
+      consumes:
+      - application/json
+      description: Atualiza parcialmente um usuário existente com as informações fornecidas
+      parameters:
+      - description: ID do Usuário
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Campos do Usuário para Atualizar
+        in: body
+        name: body
+        required: true
+        schema:
+          additionalProperties: true
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Usuário atualizado com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Atualiza informações de um usuário
+      tags:
+      - usuarios
+swagger: "2.0"

@@ -1,13 +1,13 @@
 package main
 
 import (
-    "pontomenos-api/controllers"
-    "pontomenos-api/infrastructure/database"
-    "pontomenos-api/models"
-    "pontomenos-api/infrastructure/repositories"
-    "pontomenos-api/routes"
-    "pontomenos-api/services"
-	"pontomenos-api/utils" 
+	"pontomenos-api/controllers"
+	"pontomenos-api/infrastructure/database"
+	"pontomenos-api/infrastructure/repositories"
+	"pontomenos-api/models"
+	"pontomenos-api/routes"
+	"pontomenos-api/services"
+	"pontomenos-api/utils"
 )
 
 // @title Pontomenos API
@@ -15,6 +15,10 @@ import (
 // @version 1.0
 // @host localhost:8080
 // @BasePath /
+// @schemes http https
+// @securityDefinitions.apikey Bearer
+// @in header
+// @name Authorization
 func main() {
     db := database.ConectarBancoDeDados()
     db.AutoMigrate(&models.Usuario{})

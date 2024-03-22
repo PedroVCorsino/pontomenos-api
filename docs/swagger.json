@@ -99,6 +99,42 @@
                 }
             }
         },
+        "/registros/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retorna um registro de ponto dado seu ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registros"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID do Registro de Ponto",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.RegistroPonto"
+                        }
+                    }
+                }
+            }
+        },
         "/usuarios": {
             "post": {
                 "description": "Adiciona um novo usuário com as informações fornecidas",
@@ -258,6 +294,43 @@
                     "type": "string"
                 }
             }
+        },
+        "models.RegistroPonto": {
+            "type": "object",
+            "properties": {
+                "data_hora": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "tipo_ponto": {
+                    "$ref": "#/definitions/models.TipoPonto"
+                },
+                "usuario_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.TipoPonto": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4
+            ],
+            "x-enum-comments": {
+                "Entrada": "iota promove a enumeração automática, começando de 0"
+            },
+            "x-enum-varnames": [
+                "Entrada",
+                "SaidaIntervalo",
+                "EntradaIntervalo",
+                "Saida",
+                "MaxLimit"
+            ]
         },
         "models.Usuario": {
             "type": "object",

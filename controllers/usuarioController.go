@@ -7,12 +7,10 @@ import (
     "pontomenos-api/services"
 )
 
-// UsuarioController estrutura para o controlador do usuário.
 type UsuarioController struct {
     Service *services.UsuarioService
 }
 
-// NewUsuarioController cria uma nova instância de UsuarioController.
 func NewUsuarioController(service *services.UsuarioService) *UsuarioController {
     return &UsuarioController{
         Service: service,
@@ -53,17 +51,14 @@ func (uc *UsuarioController) FindUsuarioById(c *gin.Context) {
     id := c.Param("id")
     usuario, err := uc.Service.FindUsuarioById(id)
     if err != nil {
-        // Verifica se o erro é devido ao usuário não encontrado
         if err == services.ErrUsuarioNaoEncontrado {
             c.JSON(http.StatusNotFound, gin.H{"error": "usuário não encontrado"})
         } else {
-            // Para outros tipos de erro, retorna um erro interno do servidor
             c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         }
         return
     }
 
-    // Se não houver erro, retorna o usuário encontrado
     c.JSON(http.StatusOK, usuario)
 }
 

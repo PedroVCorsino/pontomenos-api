@@ -1,5 +1,3 @@
-// controllers/loginController.go
-
 package controllers
 
 import (

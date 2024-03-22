@@ -1,5 +1,3 @@
-// infrastructure/repositories/usuarioRepository.go
-
 package repositories
 
 import (
@@ -38,8 +36,6 @@ func (r *UsuarioRepository) Delete(id string) error {
     result := r.db.Delete(&models.Usuario{}, id)
     return result.Error
 }
-
-// repositories/usuarioRepository.go
 
 func (r *UsuarioRepository) FindByLogin(login string) (*models.Usuario, error) {
     var usuario models.Usuario

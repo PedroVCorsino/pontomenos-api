@@ -7,6 +7,33 @@ definitions:
       senha:
         type: string
     type: object
+  models.RegistroPonto:
+    properties:
+      data_hora:
+        type: string
+      id:
+        type: integer
+      tipo_ponto:
+        $ref: '#/definitions/models.TipoPonto'
+      usuario_id:
+        type: integer
+    type: object
+  models.TipoPonto:
+    enum:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    type: integer
+    x-enum-comments:
+      Entrada: iota promove a enumeração automática, começando de 0
+    x-enum-varnames:
+    - Entrada
+    - SaidaIntervalo
+    - EntradaIntervalo
+    - Saida
+    - MaxLimit
   models.Usuario:
     properties:
       email:
@@ -80,6 +107,28 @@ paths:
       summary: Registra ponto
       tags:
       - ponto
+  /registros/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retorna um registro de ponto dado seu ID
+      parameters:
+      - description: ID do Registro de Ponto
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.RegistroPonto'
+      security:
+      - Bearer: []
+      tags:
+      - registros
   /usuarios:
     post:
       consumes:

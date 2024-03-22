@@ -3,7 +3,7 @@ package routes
 import (
 	"pontomenos-api/controllers"
 	_ "pontomenos-api/docs"
-	"pontomenos-api/queue"
+	"pontomenos-api/queue/sender"
 	"pontomenos-api/services"
 	"pontomenos-api/utils"
 
@@ -12,9 +12,10 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func SetupRouter(usuarioController *controllers.UsuarioController, 
+func SetupRouter(usuarioController *controllers.UsuarioController,
+    registroPontoController *controllers.RegistroPontoController, 
     usuarioService *services.UsuarioService, 
-    pontoSender *queue.PontoSender) *gin.Engine {
+    pontoSender *sender.PontoSender) *gin.Engine {
 router := gin.Default()
 
     authUtils := utils.NewAutenticacaoUtils()
@@ -26,14 +27,15 @@ router := gin.Default()
 
     // Configuração do Registro de Ponto
     registroPontoService := services.NewRegistroPontoEventoService(pontoSender)
-    registroPontoController := controllers.NewRegistroPontoEventoController(registroPontoService)
-    router.POST("/ponto", registroPontoController.RegistraPonto)
+    registroPontoEventoController := controllers.NewRegistroPontoEventoController(registroPontoService)
+    router.POST("/ponto", registroPontoEventoController.RegistraPonto)
     
     // Configuração do Swagger
     router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
     // Rotas de Usuário
     UsuarioRoutes(router, usuarioController)
+    RegistroPontoRoutes(router, registroPontoController)
     
     return router
 }

@@ -1,13 +1,14 @@
 package services
 
 import (
-    "errors"
-    "github.com/dgrijalva/jwt-go"
-    "pontomenos-api/utils"
-    "time"
+	"errors"
+	"pontomenos-api/utils"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
-var jwtKey = []byte("sua_chave_secreta_super_secreta")
+var jwtKey = []byte("pontomenos-fiap")
 
 type LoginService struct {
     userService *UsuarioService
@@ -32,9 +33,9 @@ func (ls *LoginService) Autenticar(login, senha string) (string, error) {
     }
 
     expirationTime := time.Now().Add(1 * time.Hour)
-    claims := &jwt.StandardClaims{
+    claims := &jwt.RegisteredClaims{
         Subject:   usuario.Email,
-        ExpiresAt: expirationTime.Unix(),
+        ExpiresAt: jwt.NewNumericDate(expirationTime),
     }
 
     token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

@@ -1,15 +1,24 @@
 package controllers
 
 import (
-    "github.com/gin-gonic/gin"
-    "net/http"
-    "pontomenos-api/services"
+	"net/http"
+	"pontomenos-api/services" // Ajuste para o caminho correto do seu pacote services
+
+	"github.com/gin-gonic/gin"
 )
 
+// LoginData representa os dados de login recebidos na requisição
+type LoginData struct {
+    Login string `json:"login"`
+    Senha string `json:"senha"`
+}
+
+// LoginController controla as operações de login
 type LoginController struct {
     loginService *services.LoginService
 }
 
+// NewLoginController cria uma nova instância de LoginController
 func NewLoginController(loginService *services.LoginService) *LoginController {
     return &LoginController{
         loginService: loginService,
@@ -21,15 +30,13 @@ func NewLoginController(loginService *services.LoginService) *LoginController {
 // @Tags auth
 // @Accept  json
 // @Produce  json
-// @Param   login body string true "Login do Usuário"
-// @Param   senha body string true "Senha do Usuário"
-// @Success 200 {string} string "token JWT"
+// @Param   body body LoginData true "Dados de Login"
+// @Success 200 {object} map[string]string "Token JWT"
+// @Failure 400 {object} map[string]string "Mensagem de erro para requisição inválida"
+// @Failure 401 {object} map[string]string "Mensagem de erro para login ou senha inválidos"
 // @Router /auth [post]
 func (lc *LoginController) Autenticar(c *gin.Context) {
-    var loginData struct {
-        Login string `json:"login"`
-        Senha string `json:"senha"`
-    }
+    var loginData LoginData
     if err := c.ShouldBindJSON(&loginData); err != nil {
         c.JSON(http.StatusBadRequest, gin.H{"error": "Requisição inválida"})
         return

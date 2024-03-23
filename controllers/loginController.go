@@ -2,23 +2,20 @@ package controllers
 
 import (
 	"net/http"
-	"pontomenos-api/services" // Ajuste para o caminho correto do seu pacote services
+	"pontomenos-api/services"
 
 	"github.com/gin-gonic/gin"
 )
 
-// LoginData representa os dados de login recebidos na requisição
 type LoginData struct {
     Login string `json:"login"`
     Senha string `json:"senha"`
 }
 
-// LoginController controla as operações de login
 type LoginController struct {
     loginService *services.LoginService
 }
 
-// NewLoginController cria uma nova instância de LoginController
 func NewLoginController(loginService *services.LoginService) *LoginController {
     return &LoginController{
         loginService: loginService,

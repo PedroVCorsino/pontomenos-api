@@ -3,6 +3,8 @@ package controllers
 import (
 	"net/http"
 	"pontomenos-api/services"
+	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,7 +30,7 @@ func NewRegistroPontoController(service *services.RegistroPontoService) *Registr
 // @Router /registros/{id} [get]
 func (rpc *RegistroPontoController) FindRegistroPontoById(c *gin.Context) {
     id := c.Param("id")
-    registroPonto, err := rpc.Service.FindRegistroById(id)
+    resposta, err := rpc.Service.FindRegistroById(id)
     if err != nil {
         if err == services.ErrRegistroNaoEncontrado {
             c.JSON(http.StatusNotFound, gin.H{"error": "registro de ponto não encontrado"})
@@ -38,6 +40,81 @@ func (rpc *RegistroPontoController) FindRegistroPontoById(c *gin.Context) {
         return
     }
 
+    // Formata a resposta
+    registroPonto := struct {
+        ID        uint      `json:"id"`
+        UsuarioID uint      `json:"usuario_id"`
+        DataHora  string    `json:"data_hora"` 
+        TipoPonto string    `json:"tipo_ponto"` 
+    }{
+        ID:        resposta.ID,
+        UsuarioID: resposta.UsuarioID,
+        DataHora:  resposta.DataHora.Format("02/01/2006 15:04"), 
+        TipoPonto: resposta.TipoPonto.String(), 
+    }
+
     c.JSON(http.StatusOK, registroPonto)
+}
+
+// VisualizarRegistrosPorData @Summary Visualiza registros de ponto por data
+// @Security Bearer
+// @Description Retorna registros de ponto de um usuário para uma data específica, incluindo o total de horas trabalhadas
+// @Tags registros
+// @Accept json
+// @Produce json
+// @Param usuario_id path uint true "ID do Usuário"
+// @Param data query string true "Data dos Registros de Ponto (formato: YYYY-MM-DD)"
+// @Success 200 {array} RegistroPontoResponse "Uma lista de registros de ponto com total de horas trabalhadas"
+// @Router /registros/visualizar [get]
+func (rpc *RegistroPontoController) VisualizarRegistrosPorData(c *gin.Context) {
+    userID, ok := c.Get("userID")
+    if !ok {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "userID não encontrado"})
+        return
+    }
+
+    userIDStr, ok := userID.(string)
+    if !ok {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "userID deve ser uma string"})
+        return
+    }
+
+    usuarioID, err := strconv.Atoi(userIDStr)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "userID inválido"})
+        return
+    }
+
+    dataStr := c.Query("data")
+    data, err := time.Parse("2006-01-02", dataStr)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Formato de data inválido"})
+        return
+    }
+
+    registros, totalHoras, err := rpc.Service.VisualizarRegistrosPorData(uint(usuarioID), data) 
+    if err != nil {
+        if err == services.ErrRegistroNaoEncontrado {
+            c.JSON(http.StatusNotFound, gin.H{"error": "Registros de ponto não encontrados para a data"})
+        } else {
+            c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        }
+        return
+    }
+
+    resposta := make([]RegistroPontoResponse, 0, len(registros))
+    for _, reg := range registros {
+        resposta = append(resposta, RegistroPontoResponse{
+            ID:        reg.ID,
+            UsuarioID: reg.UsuarioID,
+            DataHora:  reg.DataHora.Format("02/01/2006 15:04"),
+            TipoPonto: reg.TipoPonto.String(),
+        })
+    }
+
+    c.JSON(http.StatusOK, gin.H{
+        "registros":   resposta,
+        "total_horas": totalHoras.String(),
+    })
 }
 

@@ -142,6 +142,57 @@ paths:
       - Bearer: []
       tags:
       - registros
+  /registros/enviar-espelho:
+    get:
+      consumes:
+      - application/json
+      description: Gera e envia por e-mail o espelho de ponto mensal para o usuário
+        especificado.
+      parameters:
+      - description: ID do Usuário
+        in: query
+        name: usuarioID
+        required: true
+        type: string
+      - description: E-mail do Destinatário
+        in: query
+        name: email
+        required: true
+        type: string
+      - description: Mês do Relatório
+        in: query
+        name: mes
+        required: true
+        type: integer
+      - description: Ano do Relatório
+        in: query
+        name: ano
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Relatório enviado com sucesso'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: 'error: Descrição do erro'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'error: Erro ao enviar e-mail'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - Bearer: []
+      tags:
+      - registros
   /registros/visualizar:
     get:
       consumes:

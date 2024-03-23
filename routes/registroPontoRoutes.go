@@ -10,7 +10,8 @@ import (
 func RegistroPontoRoutes(router *gin.Engine, registroPontoController *controllers.RegistroPontoController) {
     registro := router.Group("/registros")
     registro.Use(middleware.AuthorizeJWT()) 
-    {
+    {	
+		registro.GET("/enviar-espelho", registroPontoController.EnviarEspelhoMensalPorEmail)
 		registro.GET("/visualizar", registroPontoController.VisualizarRegistrosPorData)
         registro.GET("/:id", registroPontoController.FindRegistroPontoById)
 		

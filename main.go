@@ -59,5 +59,10 @@ func main() {
 	
 	//Rotas
     router := routes.SetupRouter(usuarioController, registroPontoController, usuarioService, pontoSender)
+	
+	//migration
+	// popularBancoDeDados(db)
+
     router.Run() //  ex caso eu queira mudar a porta router.Run("8080")
 }
+

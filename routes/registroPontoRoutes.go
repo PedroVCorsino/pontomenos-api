@@ -11,7 +11,9 @@ func RegistroPontoRoutes(router *gin.Engine, registroPontoController *controller
     registro := router.Group("/registros")
     registro.Use(middleware.AuthorizeJWT()) 
     {
+		registro.GET("/visualizar", registroPontoController.VisualizarRegistrosPorData)
         registro.GET("/:id", registroPontoController.FindRegistroPontoById)
+		
         // registro.PATCH("/:id", registroPontoController.UpdateRegistroPonto)  
         // registro.DELETE("/:id", registroPontoController.DeleteRegistroPonto) 
     }

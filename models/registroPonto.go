@@ -24,3 +24,20 @@ type RegistroPonto struct {
 	DataHora  time.Time `json:"data_hora"`
 	TipoPonto TipoPonto `json:"tipo_ponto"`
 }
+
+func (tp TipoPonto) String() string {
+    switch tp {
+    case Entrada:
+        return "entrada"
+    case SaidaIntervalo:
+        return "saida-intervalo"
+    case EntradaIntervalo:
+        return "entrada-intervalo"
+    case Saida:
+        return "saida"
+    case MaxLimit:
+        return "max-limit"
+    default:
+        return "desconhecido"
+    }
+}

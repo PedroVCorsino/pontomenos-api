@@ -1,8 +1,9 @@
 package repositories
 
 import (
-    "pontomenos-api/models"
-    "gorm.io/gorm"
+	"pontomenos-api/models"
+
+	"gorm.io/gorm"
 )
 
 type UsuarioRepository struct {
@@ -39,7 +40,7 @@ func (r *UsuarioRepository) Delete(id string) error {
 
 func (r *UsuarioRepository) FindByLogin(login string) (*models.Usuario, error) {
     var usuario models.Usuario
-    if err := r.db.Where("nome = ? OR email = ?", login, login).First(&usuario).Error; err != nil {
+    if err := r.db.Where("nome = ? OR matricula = ?", login, login).First(&usuario).Error; err != nil {
         return nil, err
     }
     return &usuario, nil

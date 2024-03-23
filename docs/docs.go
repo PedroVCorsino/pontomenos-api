@@ -101,6 +101,52 @@ const docTemplate = `{
                 }
             }
         },
+        "/registros/visualizar": {
+            "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
+                "description": "Retorna registros de ponto de um usuário para uma data específica, incluindo o total de horas trabalhadas",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "registros"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do Usuário",
+                        "name": "usuario_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Data dos Registros de Ponto (formato: YYYY-MM-DD)",
+                        "name": "data",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Uma lista de registros de ponto com total de horas trabalhadas",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/controllers.RegistroPontoResponse"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/registros/{id}": {
             "get": {
                 "security": [
@@ -297,6 +343,23 @@ const docTemplate = `{
                 }
             }
         },
+        "controllers.RegistroPontoResponse": {
+            "type": "object",
+            "properties": {
+                "data_hora": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "tipo_ponto": {
+                    "type": "string"
+                },
+                "usuario_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "models.RegistroPonto": {
             "type": "object",
             "properties": {
@@ -342,6 +405,9 @@ const docTemplate = `{
                 },
                 "id": {
                     "type": "integer"
+                },
+                "matricula": {
+                    "type": "string"
                 },
                 "nome": {
                     "type": "string"

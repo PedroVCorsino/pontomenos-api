@@ -68,3 +68,17 @@ func (repo *RegistroPontoRepository) FindNextEvent(usuarioID uint, dataHora time
         return 0, gorm.ErrInvalidData 
     }
 }
+
+// BuscarRegistrosPorData busca os registros de ponto de um usuário para uma data específica, ordenados por hora.
+func (r *RegistroPontoRepository) BuscarRegistrosPorData(usuarioID uint, data time.Time) ([]models.RegistroPonto, error) {
+    var registros []models.RegistroPonto
+    
+    inicioDia := time.Date(data.Year(), data.Month(), data.Day(), 0, 0, 0, 0, data.Location())
+    fimDia := inicioDia.AddDate(0, 0, 1)
+
+    err := r.db.Where("usuario_id = ? AND data_hora >= ? AND data_hora < ?", usuarioID, inicioDia, fimDia).
+        Order("data_hora ASC"). 
+        Find(&registros).Error
+
+    return registros, err
+}

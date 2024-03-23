@@ -7,6 +7,17 @@ definitions:
       senha:
         type: string
     type: object
+  controllers.RegistroPontoResponse:
+    properties:
+      data_hora:
+        type: string
+      id:
+        type: integer
+      tipo_ponto:
+        type: string
+      usuario_id:
+        type: integer
+    type: object
   models.RegistroPonto:
     properties:
       data_hora:
@@ -40,6 +51,8 @@ definitions:
         type: string
       id:
         type: integer
+      matricula:
+        type: string
       nome:
         type: string
       senha:
@@ -125,6 +138,36 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/models.RegistroPonto'
+      security:
+      - Bearer: []
+      tags:
+      - registros
+  /registros/visualizar:
+    get:
+      consumes:
+      - application/json
+      description: Retorna registros de ponto de um usuário para uma data específica,
+        incluindo o total de horas trabalhadas
+      parameters:
+      - description: ID do Usuário
+        in: path
+        name: usuario_id
+        required: true
+        type: integer
+      - description: 'Data dos Registros de Ponto (formato: YYYY-MM-DD)'
+        in: query
+        name: data
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Uma lista de registros de ponto com total de horas trabalhadas
+          schema:
+            items:
+              $ref: '#/definitions/controllers.RegistroPontoResponse'
+            type: array
       security:
       - Bearer: []
       tags:

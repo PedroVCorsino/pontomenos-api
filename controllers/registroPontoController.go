@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"pontomenos-api/services"
 	"strconv"
@@ -117,4 +118,60 @@ func (rpc *RegistroPontoController) VisualizarRegistrosPorData(c *gin.Context) {
         "total_horas": totalHoras.String(),
     })
 }
+
+// EnviarEspelhoMensalPorEmail @Summary Enviar espelho de ponto mensal por e-mail
+// @Security Bearer
+// @Description Gera e envia por e-mail o espelho de ponto mensal para o usuário especificado.
+// @Tags registros
+// @Accept  json
+// @Produce  json
+// @Param   usuarioID  query  string  true  "ID do Usuário"
+// @Param   email      query  string  true  "E-mail do Destinatário"
+// @Param   mes        query  int     true  "Mês do Relatório"
+// @Param   ano        query  int     true  "Ano do Relatório"
+// @Success 200 {object} map[string]interface{} "message: Relatório enviado com sucesso"
+// @Failure 400 {object} map[string]string "error: Descrição do erro"
+// @Failure 500 {object} map[string]string "error: Erro ao enviar e-mail"
+// @Router /registros/enviar-espelho [get]
+func (rpc *RegistroPontoController) EnviarEspelhoMensalPorEmail(c *gin.Context) {
+	log.Println("A")
+    usuarioID, err := strconv.ParseUint(c.Query("usuarioID"), 10, 32)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "ID de usuário inválido"})
+        return
+    }
+    log.Println("B")
+    email := c.Query("email")
+    if email == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "E-mail destinatário é obrigatório"})
+        return
+    }
+	log.Println("C")
+    mes, err := strconv.Atoi(c.Query("mes"))
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Mês inválido"})
+        return
+    }
+    log.Println("D")
+    ano, err := strconv.Atoi(c.Query("ano"))
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Ano inválido"})
+        return
+    }
+	log.Println("E")
+    relatorio, err := rpc.Service.GerarEspelhoPontoMensal(uint(usuarioID), ano, mes)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao gerar relatório"})
+        return
+    }
+	log.Println("F")
+    err = rpc.Service.EnviarEmail(relatorio, email, mes, ano)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao enviar e-mail"})
+        return
+    }
+	log.Println("G")
+    c.JSON(http.StatusOK, gin.H{"message": "Relatório enviado com sucesso"})
+}
+
 

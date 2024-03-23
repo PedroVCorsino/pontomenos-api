@@ -69,7 +69,6 @@ func (repo *RegistroPontoRepository) FindNextEvent(usuarioID uint, dataHora time
     }
 }
 
-// BuscarRegistrosPorData busca os registros de ponto de um usuário para uma data específica, ordenados por hora.
 func (r *RegistroPontoRepository) BuscarRegistrosPorData(usuarioID uint, data time.Time) ([]models.RegistroPonto, error) {
     var registros []models.RegistroPonto
     
@@ -80,5 +79,14 @@ func (r *RegistroPontoRepository) BuscarRegistrosPorData(usuarioID uint, data ti
         Order("data_hora ASC"). 
         Find(&registros).Error
 
+    return registros, err
+}
+
+func (repo *RegistroPontoRepository) BuscarRegistrosPorPeriodo(usuarioID uint, inicio, fim time.Time) ([]models.RegistroPonto, error) {
+    var registros []models.RegistroPonto
+    err := repo.db.
+        Where("usuario_id = ? AND data_hora >= ? AND data_hora <= ?", usuarioID, inicio, fim).
+        Order("data_hora asc").
+        Find(&registros).Error
     return registros, err
 }

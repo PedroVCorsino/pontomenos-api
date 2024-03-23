@@ -3,10 +3,13 @@ package services
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"pontomenos-api/infrastructure/repositories"
 	"pontomenos-api/models"
 	"time"
+
+	"gopkg.in/gomail.v2"
 )
 
 var (
@@ -95,4 +98,52 @@ func (rps *RegistroPontoService) VisualizarRegistrosPorData(usuarioID uint, data
     }
 
     return registros, totalHoras, nil
+}
+
+func (rps *RegistroPontoService) GerarEspelhoPontoMensal(usuarioID uint, ano, mes int) (string, error) {
+    inicioMes := time.Date(ano, time.Month(mes), 1, 0, 0, 0, 0, time.UTC)
+    fimMes := inicioMes.AddDate(0, 1, 0).Add(-time.Nanosecond) 
+
+    registros, err := rps.registroPontoRepo.BuscarRegistrosPorPeriodo(usuarioID, inicioMes, fimMes)
+    if err != nil {
+        return "", err
+    }
+	
+    var totalHoras time.Duration
+    var entrada, saida time.Time
+    relatorio := "Data, Tipo de Ponto, Hora\n"
+    
+    for _, registro := range registros {
+        relatorio += fmt.Sprintf("%s, %s, %s\n", registro.DataHora.Format("02/01/2006"), registro.TipoPonto.String(), registro.DataHora.Format("15:04"))
+        
+        switch registro.TipoPonto {
+        case models.Entrada, models.EntradaIntervalo:
+            entrada = registro.DataHora
+        case models.SaidaIntervalo, models.Saida:
+            saida = registro.DataHora
+            totalHoras += saida.Sub(entrada)
+        }
+    }
+	
+    relatorio += fmt.Sprintf("\nTotal de Horas Trabalhadas no Mês: %v horas", totalHoras.Hours())
+
+    return relatorio, nil
+}
+
+func (rps *RegistroPontoService) EnviarEmail(relatorio string, destinatario string, mes int, ano int) error {
+    d := gomail.NewDialer("smtp.gmail.com", 587, "pedrovcorsino@gmail.com", "mtiu cbry dviw pwny")
+
+    m := gomail.NewMessage()
+    m.SetHeader("From", "pedrovcorsino@gmail.com")
+    m.SetHeader("To", destinatario)
+    m.SetHeader("Subject", fmt.Sprintf("Espelho de Ponto %d/%d", mes, ano))
+    m.SetBody("text/plain", relatorio)
+	log.Println("b")
+    // Enviar o e-mail
+    if err := d.DialAndSend(m); err != nil {
+		log.Println(err)
+        return err
+    }
+	
+    return nil
 }

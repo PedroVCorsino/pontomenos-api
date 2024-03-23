@@ -34,7 +34,7 @@ func (ls *LoginService) Autenticar(login, senha string) (string, error) {
 
     expirationTime := time.Now().Add(1 * time.Hour)
     claims := &jwt.RegisteredClaims{
-        Subject:   usuario.Email,
+        Subject:   usuario.Matricula,
         ExpiresAt: jwt.NewNumericDate(expirationTime),
     }
 

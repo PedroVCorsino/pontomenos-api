@@ -6,6 +6,7 @@ import (
 	"log"
 	"pontomenos-api/infrastructure/repositories"
 	"pontomenos-api/models"
+	"time"
 )
 
 var (
@@ -77,4 +78,21 @@ func (rps *RegistroPontoService) UpdateRegistro(id string, updateData map[string
 
 func (rps *RegistroPontoService) DeleteRegistro(id string) error {
 	return rps.registroPontoRepo.Delete(id)
+}
+
+func (rps *RegistroPontoService) VisualizarRegistrosPorData(usuarioID uint, data time.Time) ([]models.RegistroPonto, time.Duration, error) {
+    registros, err := rps.registroPontoRepo.BuscarRegistrosPorData(usuarioID, data)
+    if err != nil {
+        return nil, 0, ErrRegistroNaoEncontrado
+    }
+    
+    var totalHoras time.Duration
+    for i, registro := range registros {
+        
+        if i%2 == 1 && i > 0 { // Calcula a diferença de tempo entre entrada e saída (intervalo ou fim do dia)
+            totalHoras += registro.DataHora.Sub(registros[i-1].DataHora)
+        }
+    }
+
+    return registros, totalHoras, nil
 }

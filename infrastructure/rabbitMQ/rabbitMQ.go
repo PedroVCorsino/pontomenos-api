@@ -7,7 +7,7 @@ import (
 )
 
 func ConectarRabbitMQ() *amqp091.Connection {
-	conn, err := amqp091.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp091.Dial("amqp://guest:guest@rabbitmq:5672/")
 	if err != nil {
 		log.Fatalf("Falha ao conectar com RabbitMQ: %s", err)
 	}
